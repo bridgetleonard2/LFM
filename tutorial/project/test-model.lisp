@@ -48,8 +48,8 @@
 
    (bagel ISA meaning word "bagel")
    (butter ISA meaning word "butter")
-   (creamcheese ISA meaning word "adventure")
-   (everything ISA meaning word "adventure")
+   (creamcheese ISA meaning word "creamcheese")
+   (everything ISA meaning word "everything")
 
    (candle ISA meaning word "candle")
    (wick ISA meaning word "wick")
@@ -65,11 +65,6 @@
    (sick ISA meaning word "sick")
    (garage ISA meaning word "garage")
    (house ISA meaning word "house")
-
-   (captain ISA meaning word "captain")
-   (cave ISA meaning word "cave")
-   (debutante ISA meaning word "debutante")
-   (bank ISA meaning word "bank")
 
    (octopus ISA meaning word "octopus")
    (ocean ISA meaning word "ocean")
@@ -186,6 +181,7 @@
         ?manual>
             state     free
       ==>
+        =imaginal>
         =goal>
             state     find-target
             cue       =cue
@@ -241,6 +237,8 @@
             +manual>
                 cmd       press-key
                 key       "f"
+            -goal>
+            !output!      correct
             )
 
     (P incorrect
@@ -256,6 +254,8 @@
             +manual>
                 cmd       press-key
                 key       "h"
+            -goal>
+            !output!      incorrect
                   )
 
       (goal-focus goal)
