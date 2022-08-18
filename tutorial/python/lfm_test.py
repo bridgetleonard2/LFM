@@ -19,10 +19,14 @@ pairs = list(zip(['adventure', 'bagel', 'candle', 'direction', 'home',
 # respond_to_key_press is set to monitor the output-key command
 # and records the time and key that was pressed by the model.
 
-def respond_to_key_press (model,key):
-    global response,response_time
-
+def respond_to_space_press (model,key):
+    global response_time
+    
     response_time = actr.get_time()
+
+def respond_to_key_press (model,key):
+    global response
+
     response = key
 
 # sentence function runs a simple singular trial in which a cue, target, and result (whether cue and target pair
@@ -36,8 +40,8 @@ def sentence(cue, target, result):
 
     actr.install_device(window)
 
-    actr.add_command("pair-response", respond_to_key_press, "Retrieval experiment model response")
-    actr.monitor_command("output-key","pair-response")
+    actr.add_command("cue-response", respond_to_space_press, "Retrieval experiment model response to cue")
+    actr.monitor_command("output-key","cue-response")
 
     actr.add_text_to_exp_window(window, cue)
 
@@ -48,8 +52,14 @@ def sentence(cue, target, result):
     # cue is presented -- retrieval of target begins, once some chunnk retrieved -- press key ?
 
     actr.run(30)
+    
+    actr.remove_command_monitor("output-key", "cue-response")
+    actr.remove_command("cue-response")
 
     actr.clear_exp_window(window)
+    
+    actr.add_command("feedback-response", respond_to_key_press, "Retrieval experiment model response to feedback")
+    actr.monitor_command("output-key","feedback-response")
 
     actr.add_text_to_exp_window(window, target)
 
@@ -58,8 +68,15 @@ def sentence(cue, target, result):
     response = ''
 
     actr.run(30)
+    
+    actr.remove_command_monitor("output-key", "feedback-response")
+    actr.remove_command("feedback-response")
+    
+    if response == 'f':
+        return (True, response_time / 1000)
+    elif response == 'j':
+        return (False, response_time / 1000)
 
-    return response,response_time
 
 
     # feedback provided in form of correct target -- if match response: press _, if no match press _

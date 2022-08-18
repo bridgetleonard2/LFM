@@ -253,7 +253,7 @@
           ==>
             +manual>
                 cmd       press-key
-                key       "h"
+                key       "j"
             -goal>
             !output!      incorrect
                   )
