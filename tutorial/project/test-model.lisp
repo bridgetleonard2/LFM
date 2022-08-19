@@ -233,11 +233,21 @@
                 target    =response
             ?manual>
                 state     free
+            ?visual>
+                state     free
           ==>
             +manual>
                 cmd       press-key
                 key       "f"
-            -goal>
+            =goal>
+                isa       task
+                state     start
+                cue       nil
+                response  nil
+                target    nil
+            -imaginal>
+            +visual>
+                cmd       clear
             !output!      correct
             )
 
@@ -254,7 +264,15 @@
             +manual>
                 cmd       press-key
                 key       "j"
-            -goal>
+            =goal>
+                isa       task
+                state     start
+                cue       nil
+                response  nil
+                target    nil
+            -imaginal>
+            +visual>
+                cmd       clear
             !output!      incorrect
                   )
 
