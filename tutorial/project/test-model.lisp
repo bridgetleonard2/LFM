@@ -1,7 +1,17 @@
 
 (define-model lfm
 
-  (sgp :v t :act nil :esc t :lf .63 :mas 1.6)
+; :lf parameter is latency factor (set in fan model as .63)
+; :mas parameter is max associative strength/turns on spreading activation
+; (set as 1.6 in fan model)
+; :act parameter if t (nil if off) causes the declarative memory
+; system to print the details of the activation computations
+; that occur during a retrieval request in the trace.
+; ;ans is instantaneous noise parameter (noise varying trial by trial)
+; :rt parameter sets retrieval threshold
+
+  (sgp :v t :act t :esc t :lf .63
+    :mas 1.6 :bll 0.5 :ans 0.5 :rt -2)
   (sgp :style-warnings nil)
 
   (chunk-type association arg1 arg2)
