@@ -122,6 +122,7 @@ def do_experiment(size,trials):
             global response_time
 
             response_time = 0
+            start = actr.get_time()
 
             # cue is presented -- retrieval of target begins, once some chunnk retrieved -- press key ?
 
@@ -152,10 +153,10 @@ def do_experiment(size,trials):
             
             if response == 'f':
                 score += 1
-                time += response_time
+                time += response_time - start
                 
             if response == 'j':
-                time += response_time
+                time += response_time - start
         
         # Record the score and time data in the result list
         
