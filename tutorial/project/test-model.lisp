@@ -10,11 +10,11 @@
 ; ;ans is instantaneous noise parameter (noise varying trial by trial)
 ; :rt parameter sets retrieval threshold
 
-  (sgp :v t :act t :esc t :lf .63
+  (sgp :v t :act nil :esc t :lf .63
     :mas 1.6 :bll 0.5 :ans 0.5 :rt -2)
   (sgp :style-warnings nil)
 
-  (chunk-type association arg1 arg2)
+  (chunk-type association arg1 arg2 arg3 not)
   (chunk-type meaning word)
   (chunk-type task state cue response target)
 
@@ -158,6 +158,7 @@
             cue       =retrieval
         =imaginal>
             arg1      =retrieval
+            arg3      =retrieval
         )
 
     (P retrieve-from-cue
@@ -192,6 +193,7 @@
             state     free
       ==>
         =imaginal>
+            not       =response
         =goal>
             state     find-target
             cue       =cue
@@ -241,6 +243,8 @@
                 cue       =cue
                 response  =response
                 target    =response
+            =imaginal>
+
             ?manual>
                 state     free
             ?visual>
@@ -255,6 +259,9 @@
                 cue       nil
                 response  nil
                 target    nil
+            =imaginal>
+                arg3      nil
+                not       nil
             -imaginal>
             +visual>
                 cmd       clear
