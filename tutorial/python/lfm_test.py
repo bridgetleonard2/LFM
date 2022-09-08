@@ -170,7 +170,11 @@ def do_experiment(size,trials):
     
    
     
-   
+    # make an experiment function that takes three parameters which indicated
+    # the number of pairs to use, the number of trials to run, and the number
+    # of blocks to run.
+    
+# def experiment(size,trials,blocks):
     
    
     
@@ -184,58 +188,5 @@ def do_experiment(size,trials):
     
    
     
-   
-    # make an experiment function that takes one parameter 'term' which indicates that 
-    # cues are being used for retrieval
-
-def do_cue():
-    
-    results = []
-    
-    for cue,target in [('adventure', 'trip') 
-                       ('bagel', 'butter') 
-                       ('candle', 'wick') 
-                       ('direction', 'arrow')
-                       ('home','sick') 
-                       ('octopus', 'ocean')  
-                       ('potato', 'mash')
-                       ('stack', 'build')
-                       ('wreck', 'ship')]:
-        
-        results.append(sentence(cue,target))
-        
-    return results
-
-# create an experiment function that runs each word pair through once and
-# 
-
-# create an output function to organize data from experiment run
-# that takes one parameter which is the data from the original experiment
-
-def output_person_location(data):
-
-    rts = list(map(lambda x: x[0],data))
-
-    actr.correlation(rts,person_location_data)
-    actr.mean_deviation(rts,person_location_data)
-
-    print("TARGETS:\n                         Person fan")
-    print("  Location      1             2             3")
-    print("    fan")
-    
-    for i in range(3):
-        print("     %d      " % (i+1),end="")
-        for j in range(3):
-            print("%6.3f (%-5s)" % (data[j + (i * 3)]),end="")
-        print()
-
-    print()
-    print("FOILS:")
-    for i in range(3):
-        print("     %d      " % (i+1),end="")
-        for j in range(3):
-            print("%6.3f (%-5s)" % (data[j + ((i + 3) * 3)]),end="")
-        print()
-
 
     
