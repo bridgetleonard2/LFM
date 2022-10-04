@@ -10,7 +10,7 @@
 ; ;ans is instantaneous noise parameter (noise varying trial by trial)
 ; :rt parameter sets retrieval threshold
 
-  (sgp :v t :act nil :esc t :lf .63
+  (sgp :v t :act t :esc t :lf .63
     :mas 1.6 :bll 0.5 :ans 0.5 :rt -2)
   (sgp :style-warnings nil)
 

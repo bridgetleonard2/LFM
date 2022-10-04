@@ -167,15 +167,166 @@ def do_experiment(size,trials):
     
     
    
-    
+def do_cue(trials):
+     
+     # create a variable to hold the data
+     
+     result = []
+     
+     # install the virtual window for the model
+     
+     window = actr.open_exp_window("Retrieval Experiment", visible=False)
+
+     actr.install_device(window)
+     
+     # loop over the number of trials
+     # score will increase 1 if correct, 0 if wrong
+     # time will gather response times (maybe split into correct vs 
+     # incorrect later)
+     
+     for i in range(trials):
+         score = 0
+         time = 0
+         
+         for cue,target in actr.permute_list(pairs):
+             
+             
+             # clear window and display the prompt -- run bulk of 
+             # sentence function here
+             
+             actr.clear_exp_window(window)
+             
+             actr.add_command("cue-response", respond_to_space_press, "Retrieval experiment model response to cue")
+             actr.monitor_command("output-key","cue-response")
+             
+             actr.add_text_to_exp_window(window, cue)
+             
+             global response_time
+
+             response_time = 0
+             start = actr.get_time()
+
+             # cue is presented -- retrieval of target begins, once some chunnk retrieved -- press key ?
+
+             actr.run(30)
+             
+             actr.remove_command_monitor("output-key", "cue-response")
+             actr.remove_command("cue-response")
+
+             actr.clear_exp_window(window)
+             
+             actr.add_command("feedback-response", respond_to_key_press, "Retrieval experiment model response to feedback")
+             actr.monitor_command("output-key","feedback-response")
+
+             actr.add_text_to_exp_window(window, target)
+
+             global response
+
+             response = ''
+
+             actr.run(30)
+             
+             actr.remove_command_monitor("output-key", "feedback-response")
+             actr.remove_command("feedback-response")
+             
+             # If there is a correct response increment the
+             # count of correct answers and the cumulative
+             # response times.
+             
+             if response == 'f':
+                 score += 1
+                 time += response_time - start
+                 
+             if response == 'j':
+                 time += response_time - start
+         
+         # Record the score and time data in the result list
+         
+         result.append((score/9, time/9/1000))
+         
+     return result   
    
     
-    # make an experiment function that takes three parameters which indicated
-    # the number of pairs to use, the number of trials to run, and the number
-    # of blocks to run.
+    # make an experiment function that runs the model through the paradigm
     
-# def experiment(size,trials,blocks):
+    # i want the output to be a table: x = wordpair y = phase values = performance (correct/incorr & RT)
+
+
+
+def do_sentence(cue,target):
+
+    window = actr.open_exp_window("Retrieval Experiment", visible=False)
+
+    actr.install_device(window)
+
+    actr.add_command("cue-response", respond_to_space_press, "Retrieval experiment model response to cue")
+    actr.monitor_command("output-key","cue-response")
+
+    actr.add_text_to_exp_window(window, cue)
+
+    global response_time
+
+    response_time = 0
+    start = actr.get_time()
+
+    # cue is presented -- retrieval of target begins, once some chunnk retrieved -- press key ?
+
+    actr.run(30)
     
+    actr.remove_command_monitor("output-key", "cue-response")
+    actr.remove_command("cue-response")
+
+    actr.clear_exp_window(window)
+    
+    actr.add_command("feedback-response", respond_to_key_press, "Retrieval experiment model response to feedback")
+    actr.monitor_command("output-key","feedback-response")
+
+    actr.add_text_to_exp_window(window, target)
+
+    global response
+
+    response = ''
+
+    actr.run(30)
+    
+    actr.remove_command_monitor("output-key", "feedback-response")
+    actr.remove_command("feedback-response")
+    
+    rt = response_time - start
+    
+    if response == 'f':
+        return (True, rt / 1000)
+    elif response == 'j':
+        return (False, rt / 1000)
+    
+    
+
+# experiment runs the model through one trial of 
+# each condition using each of the retrieval productions
+# and averages the results then displays the results.
+
+
+
+def true_experiment():
+     
+     result = []
+            
+     for cue,target in [('adventure', 'trip') 
+                        ('bagel', 'butter') 
+                        ('candle', 'wick') 
+                        ('direction', 'arrow')
+                        ('home','sick') 
+                        ('octopus', 'ocean')  
+                        ('potato', 'mash')
+                        ('stack', 'build')
+                        ('wreck', 'ship')]:
+             
+             result.append(do_sentence(cue,target))
+         
+     return result   
+   
+
+
    
     
    
