@@ -295,9 +295,9 @@ def do_sentence(cue,target):
     rt = response_time - start
     
     if response == 'f':
-        return (True, rt / 1000)
+        return (cue, True, rt / 1000)
     elif response == 'j':
-        return (False, rt / 1000)
+        return (cue, False, rt / 1000)
     
     
 
@@ -311,14 +311,14 @@ def true_experiment():
      
      result = []
             
-     for cue,target in [('adventure', 'trip') 
-                        ('bagel', 'butter') 
-                        ('candle', 'wick') 
-                        ('direction', 'arrow')
-                        ('home','sick') 
-                        ('octopus', 'ocean')  
-                        ('potato', 'mash')
-                        ('stack', 'build')
+     for cue,target in [('adventure', 'trip'),
+                        ('bagel', 'butter'), 
+                        ('candle', 'wick'), 
+                        ('direction', 'arrow'),
+                        ('home','sick'), 
+                        ('octopus', 'ocean'),  
+                        ('potato', 'mash'),
+                        ('stack', 'build'),
                         ('wreck', 'ship')]:
              
              result.append(do_sentence(cue,target))
