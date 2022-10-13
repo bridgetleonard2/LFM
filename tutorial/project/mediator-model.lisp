@@ -19,10 +19,10 @@
 
   (add-dm
     (goal isa task state start)
-    (attend isa chunk) (retrieve-meaning isa chunk) (detect-error isa chunk)
-    (retrieve-error isa chunk)
-    (retrieve-associate isa chunk) (respond isa chunk) (find-target isa chunk)
-    (end isa chunk)
+    (attend isa chunk)
+    (retrieve-meaning isa chunk) (detect-error isa chunk)
+    (retrieve-error isa chunk) (respond isa chunk)
+    (find-target isa chunk) (end isa chunk)
    (p1 ISA association arg1 adventure arg2 trip)
    (p2 ISA association arg1 adventure arg2 outdoors)
    (p3 ISA association arg1 adventure arg2 bike)
@@ -167,7 +167,7 @@
     (P past-error
         =goal>
             state     detect-error
-            cue       cue
+            cue       =cue
         =imaginal>
             isa       association
             arg1      =cue
@@ -200,11 +200,11 @@
             state     free
       ==>
         =imaginal>
-            error     =response
+            error     =target
         =goal>
             state     find-target
             cue       =cue
-            response  =response
+            response  =target
         +manual>
             cmd       press-key
             key       space
@@ -214,11 +214,11 @@
         =goal>
             state     retrieve-error
             cue       =cue
+        =imaginal>
+            isa       association
         ?retrieval>
             buffer    failure
-        ?retrieval>
             state     free
-            buffer    empty
       ==>
         =goal>
             state     respond
