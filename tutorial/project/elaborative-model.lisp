@@ -1,5 +1,5 @@
 
-(define-model lfm
+(define-model elaborative
 
 ; :lf parameter is latency factor (set in fan model as .63)
 ; :mas parameter is max associative strength/turns on spreading activation
