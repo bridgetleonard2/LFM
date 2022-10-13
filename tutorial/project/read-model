@@ -1,5 +1,4 @@
-
-(define-model lfm
+(define-model read
 
 ; :lf parameter is latency factor (set in fan model as .63)
 ; :mas parameter is max associative strength/turns on spreading activation
@@ -14,7 +13,7 @@
     :mas 1.6 :bll 0.5 :ans 0.5 :rt -2)
   (sgp :style-warnings nil)
 
-  (chunk-type association arg1 arg2 arg3 not)
+  (chunk-type association arg1 arg2)
   (chunk-type meaning word)
   (chunk-type task state cue response target)
 
@@ -97,6 +96,13 @@
    (construction ISA meaning word "construction")
    )
 
+
+   ; first half of model will attend and encode cue -- if another
+   ; item is detected (visual location nil) then it will continue to encode a paired
+   ; if there is no other item on the screen the model will retrieve an associate
+
+   ; need to make sure find cue specifies the top word though if 2 on screen :)
+
    (P find-cue
         =goal>
           isa         task
@@ -154,11 +160,58 @@
             arg1      nil
       ==>
         =goal>
-            state     retrieve-associate
+            state     detect-target
             cue       =retrieval
         =imaginal>
             arg1      =retrieval
-            arg3      =retrieval
+        )
+
+; this is where model branches off:
+
+    (P detect-target
+        =goal>
+            state     detect-target
+        =imaginal>
+            isa       association
+      ==>
+        +visual-location>
+            :attended    nil
+        =goal>
+            state       find-location
+      )
+ ; attend-visual-location and retrieve meaning should fire again then...
+
+  (P encode-target
+       =goal>
+           state     retrieve-meaning
+         - cue       nil
+       =retrieval>
+
+       =imaginal>
+           isa       association
+         - arg1      nil
+     ==>
+       =goal>
+           state     end
+           target     =retrieval
+       =imaginal>
+           arg2      =retrieval
+         )
+; now here is where model would retrieve an associate if no new visual
+
+    (P no-target
+        =goal>
+            state     find-location
+        =visual-location?
+            buffer    failure
+        ?visual>
+            state     free
+      ==>
+        =goal>
+            state     retrieve-associate
+        +visual>
+            cmd       move-attention
+            screen-pos  =visual-location
         )
 
     (P retrieve-from-cue
@@ -259,9 +312,6 @@
                 cue       nil
                 response  nil
                 target    nil
-            =imaginal>
-                arg3      nil
-                not       nil
             -imaginal>
             +visual>
                 cmd       clear

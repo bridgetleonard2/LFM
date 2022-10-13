@@ -1,5 +1,4 @@
-
-(define-model lfm
+(define-model mediator
 
 ; :lf parameter is latency factor (set in fan model as .63)
 ; :mas parameter is max associative strength/turns on spreading activation
@@ -14,15 +13,16 @@
     :mas 1.6 :bll 0.5 :ans 0.5 :rt -2)
   (sgp :style-warnings nil)
 
-  (chunk-type association arg1 arg2 arg3 not)
+  (chunk-type association arg1 arg2 error)
   (chunk-type meaning word)
   (chunk-type task state cue response target)
 
   (add-dm
     (goal isa task state start)
-    (attend isa chunk) (retrieve-meaning isa chunk)
-    (retrieve-associate isa chunk) (respond isa chunk) (find-target isa chunk)
-    (end isa chunk)
+    (attend isa chunk)
+    (retrieve-meaning isa chunk) (detect-error isa chunk)
+    (retrieve-error isa chunk) (respond isa chunk)
+    (find-target isa chunk) (end isa chunk)
    (p1 ISA association arg1 adventure arg2 trip)
    (p2 ISA association arg1 adventure arg2 outdoors)
    (p3 ISA association arg1 adventure arg2 bike)
@@ -154,16 +154,20 @@
             arg1      nil
       ==>
         =goal>
-            state     retrieve-associate
+            state     detect-error
             cue       =retrieval
         =imaginal>
             arg1      =retrieval
-            arg3      =retrieval
         )
 
-    (P retrieve-from-cue
+; this is where model branches out:
+; first a production will fire to see if there is any chunk where cue = cue
+; and error ≠ nil --> if so pull target from this chunk
+
+    (P past-error
         =goal>
-            state     retrieve-associate
+            state     detect-error
+            cue       =cue
         =imaginal>
             isa       association
             arg1      =cue
@@ -172,11 +176,57 @@
             buffer    empty
       ==>
         =goal>
+            state     retrieve-error
+        =imaginal>
+        +retrieval>
+            isa       association
+            arg1       =cue
+          - error      nil
+        )
+
+    (P error-found
+        =goal>
+            state     retrieve-error
+            cue       =cue
+        =retrieval>
+            isa       association
+            arg1      =cue
+            arg2      =target
+            error     =error
+        =imaginal>
+            isa association
+
+        ?manual>
+            state     free
+      ==>
+        =imaginal>
+            error     =target
+        =goal>
+            state     find-target
+            cue       =cue
+            response  =target
+        +manual>
+            cmd       press-key
+            key       space
+      )
+
+    (P no-error
+        =goal>
+            state     retrieve-error
+            cue       =cue
+        =imaginal>
+            isa       association
+        ?retrieval>
+            buffer    failure
+            state     free
+      ==>
+        =goal>
             state     respond
         =imaginal>
         +retrieval>
             isa       association
-            arg1      =cue)
+            arg1      =cue
+            )
 
     (P respond
         =goal>
@@ -193,7 +243,7 @@
             state     free
       ==>
         =imaginal>
-            not       =response
+            error       =response
         =goal>
             state     find-target
             cue       =cue
@@ -260,8 +310,7 @@
                 response  nil
                 target    nil
             =imaginal>
-                arg3      nil
-                not       nil
+                error      nil
             -imaginal>
             +visual>
                 cmd       clear
