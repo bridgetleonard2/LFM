@@ -225,6 +225,22 @@
        =imaginal>
            arg2      =retrieval
          )
+;for a study pair this would fire to reset the model
+
+ (P end-study
+      =goal>
+          state     end
+          response  nil
+    ==>
+      =goal>
+          isa       task
+          state     start
+          cue       nil
+          response  nil
+          target    nil
+      -imaginal>
+      +visual>
+          cmd       clear)
 ; now here is where model would retrieve an associate if no new visual
 
     (P no-target
