@@ -48,15 +48,19 @@ def study(cue, target):
 
     actr.install_device(window)
 
-    actr.add_text_to_exp_window(window, cue)
-    actr.add_text_to_exp_window(window, target)
+    actr.add_text_to_exp_window(window, cue, y = 50)
+    actr.add_text_to_exp_window(window, target, y = 150)
     
     actr.run(10)
+    
+    actr.clear_exp_window(window)
+    
+    return print("complete")
 
 # test function runs a simple singular trial in which a cue, target, and result (whether cue and target pair
 # if T or F) is entered
 
-def test(cue, target):
+def do_test(cue, target):
 
     window = actr.open_exp_window("Retrieval Experiment", visible=False)
 
@@ -143,6 +147,6 @@ def test_phase():
                         ('stack', 'build'),
                         ('wreck', 'ship')]:
              
-             result.append(test(cue,target))
+             result.append(do_test(cue,target))
          
      return result 

@@ -18,7 +18,7 @@
   (chunk-type task state cue response target)
 
   (add-dm
-    (goal isa task state start)
+    (goal isa task state start) (detect-target isa chunk)
     (attend isa chunk) (retrieve-meaning isa chunk)
     (retrieve-associate isa chunk) (respond isa chunk) (find-target isa chunk)
     (end isa chunk)
@@ -109,19 +109,16 @@
           state       start
         ?visual-location>
           buffer      unrequested
-        ?imaginal>
-          state       free
       ==>
         =goal>
           state       find-location
-        +imaginal>
-
         +visual-location>
           isa         visual-location
+          screen-y    lowest
       )
 
-    (P attend-visual-location
-          =goal>
+    (P attend-cue-location
+        =goal>
             state     find-location
         =visual-location>
 
@@ -136,7 +133,7 @@
             cmd       move-attention
             screen-pos  =visual-location)
 
-    (P retrieve-meaning
+    (P retrieve-cue-meaning
         =goal>
             state     attend
         =visual>
@@ -155,14 +152,12 @@
             cue       nil
         =retrieval>
 
-        =imaginal>
-            isa       association
-            arg1      nil
       ==>
         =goal>
             state     detect-target
             cue       =retrieval
-        =imaginal>
+        +imaginal>
+            isa       association
             arg1      =retrieval
         )
 
@@ -174,12 +169,45 @@
         =imaginal>
             isa       association
       ==>
+        =imaginal>
         +visual-location>
             :attended    nil
         =goal>
             state       find-location
       )
- ; attend-visual-location and retrieve meaning should fire again then...
+
+    (P attend-target-location
+        =goal>
+            state     find-location
+        =imaginal>
+        =visual-location>
+
+        ?visual-location>
+            buffer    requested
+        ?visual>
+            state     free
+      ==>
+        =goal>
+            state       attend
+        =imaginal>
+        +visual>
+            cmd       move-attention
+            screen-pos  =visual-location)
+
+    (P retrieve-targ-meaning
+        =goal>
+            state     attend
+        =imaginal>
+        =visual>
+            isa       visual-object
+            value     =word
+      ==>
+        =goal>
+            state     retrieve-meaning
+        =imaginal>
+        +retrieval>
+            isa       meaning
+            word      =word)
 
   (P encode-target
        =goal>
@@ -202,16 +230,12 @@
     (P no-target
         =goal>
             state     find-location
-        =visual-location?
+          - cue       nil
+        ?visual-location>
             buffer    failure
-        ?visual>
-            state     free
       ==>
         =goal>
             state     retrieve-associate
-        +visual>
-            cmd       move-attention
-            screen-pos  =visual-location
         )
 
     (P retrieve-from-cue
@@ -246,7 +270,6 @@
             state     free
       ==>
         =imaginal>
-            not       =response
         =goal>
             state     find-target
             cue       =cue
@@ -272,22 +295,6 @@
 
 ; retrieve-meaning fires again but doesnt encode cue because cue slot has value
 
-    (P encode-target
-          =goal>
-              state     retrieve-meaning
-            - cue       nil
-          =retrieval>
-
-          =imaginal>
-              isa       association
-            - arg1      nil
-        ==>
-          =goal>
-              state     end
-              target     =retrieval
-          =imaginal>
-              arg2      =retrieval
-            )
 
     (P correct
             =goal>
