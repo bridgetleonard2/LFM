@@ -1,4 +1,4 @@
-(define-model mediator
+(define-model super
 
 ; :lf parameter is latency factor (set in fan model as .63)
 ; :mas parameter is max associative strength/turns on spreading activation
@@ -22,7 +22,7 @@
     (attend isa chunk)
     (retrieve-meaning isa chunk) (detect-error isa chunk)
     (retrieve-error isa chunk) (respond isa chunk)
-    (error-target isa chunk)(find-target isa chunk) (end isa chunk)
+    (find-target isa chunk) (end isa chunk)
    (p1 ISA association arg1 adventure arg2 trip)
    (p2 ISA association arg1 adventure arg2 outdoors)
    (p3 ISA association arg1 adventure arg2 bike)
@@ -177,7 +177,6 @@
       ==>
         =goal>
             state     retrieve-error
-            cue       =cue
         =imaginal>
         +retrieval>
             isa       association
@@ -185,8 +184,7 @@
           - error      nil
         )
 
-; error-found shouldn't retrieve the target it should just retrieve the error then
-; next production retrieves the target from the error
+; use error-found then additional production using both error and cue to retrieve target
 
     (P error-found
         =goal>
@@ -195,28 +193,6 @@
         =retrieval>
             isa       association
             arg1      =cue
-            error     =error
-        =imaginal>
-            isa association
-
-        ?retrieval>
-            state     free
-      ==>
-        =imaginal>
-        =goal>
-            state     error-target
-        +retrieval>
-            isa      association
-            error    =error
-          - arg2     nil
-      )
-
-    (P error-targ
-        =goal>
-            state     error-target
-            cue       =cue
-        =retrieval>
-            isa       association
             arg2      =target
             error     =error
         =imaginal>
@@ -229,6 +205,7 @@
             error     =target
         =goal>
             state     find-target
+            cue       =cue
             response  =target
         +manual>
             cmd       press-key
@@ -268,8 +245,6 @@
             state     free
       ==>
         =imaginal>
-            isa         association
-            arg1        =cue
             error       =response
         =goal>
             state     find-target
@@ -283,14 +258,10 @@
     (P find-target
         =goal>
             state     find-target
-            response       =response
         =visual-location>
         ?visual>
             state     free
       ==>
-        +imaginal>
-            isa       association
-            error     =response
         =goal>
             state     attend
         +visual>
@@ -308,7 +279,7 @@
 
           =imaginal>
               isa       association
-            - error      nil
+            - arg1      nil
         ==>
           =goal>
               state     end
